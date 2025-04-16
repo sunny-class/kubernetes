@@ -1,0 +1,33 @@
+eksctl create cluster --name=benjili --version 1.32 --region=ap-south-1  --nodegroup-name ng-default --node-type t3.small --nodes 2 --managed
+
+--zones=ap-south-1a,ap-south-1b
+
+
+aws eks update-kubeconfig --region ap-south-1 --name benjili
+
+
+eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster benjili --approve
+
+
+
+#export cluster_name=benjili
+#export role_name=AmazonEKS_EFS_CSI_DriverRole
+#eksctl create podidentityassociation --service-account-name efs-csi-controller-sa --namespace kube-system --cluster $cluster_name --role-name $role_name --permission-policy-arns arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy --approve
+
+
+export cluster_name=benjili
+export role_name=AmazonEKS_EFS_CSI_DriverRole
+
+aws iam create-role --role-name $role_name --assume-role-policy-document file://"aws-efs-csi-driver-trust-policy-pod-identity.json"
+
+aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy --role-name $role_name
+
+aws eks create-pod-identity-association --cluster-name $cluster_name --role-arn arn:aws:iam::061039776459:role/AmazonEKS_EFS_CSI_DriverRole --namespace kube-system --service-account efs-csi-controller-sa
+
+
+
+eksctl create addon --cluster benjili --name aws-efs-csi-driver --version latest --service-account-role-arn arn:aws:iam::061039776459:role/AmazonEKS_EFS_CSI_DriverRole --force
+
+
+
+eksctl delete cluster --name=benjili

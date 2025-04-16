@@ -1,0 +1,110 @@
+docker is contenasation platform that creates and manages the container lifecycle
+docker vs k8s
+k8s is contenasation orchestration platform
+contianers are lightweight 
+contianers used in microservice architecture
+contianers are [ephemeral = short life due to lack of resources ]
+
+problem 1 = single host {docker is intalled on single machine}
+problem 2 = container killing i.e container cannot crate by itself {auto healing with manual intervention} 
+            developera cannot creates 100s of container
+
+problem 3 = auto scaling {amazon sale on festivals or netflix new movie}
+
+problem 4 = docker cannot give enterprise solution or support = lb, fw, auto scaling, auto heal ...... 100s etc.
+
+solutions
+
+1. k8s is cluster {master node architecture} 
+   means it have 2 or more nodes so that container can deploy to another node
+
+2. auto heal, k8s control or fix the damage = roll out new pod
+
+3. Auto scaling, k8s have reaplica set
+    increase replica from 1 to 5   
+
+4. enterprice = docker never used in production,
+    k8s is from google
+    lb, ssl, fw
+
+
+kubernetes is easy    
+
+k8s architecture
+
+control plane and worker node {master slave architecture}
+
+worker node components: 
+
+kubelet = responsible for pod will always run or application run and interact with control plane
+container runtime = docker shim, containerd, crio
+kube proxy = networking for k8s, load balancer, ip address
+
+control plane components: 
+
+we see worker node have all the available necessary components why we need control plane?
+
+because of the enterprice standards. {multiple users accessing, iam,}
+
+api server = interface for kubernetes that exposes the k8s, 
+
+scheduler = responsible for pods or resources in k8s
+
+etcd = it stores the entire cluster info in key value pair
+
+controller manager = k8s have contollers which are responsible for auto scaling 
+                        {replica set ensures desired no of pods always running}
+
+cloud controller manager = eks/aks   
+
+
+What happens when you run a container in Kubernetes? Explain the internal workings.
+
+When you run a container in Kubernetes, the container is scheduled, deployed, and managed efficiently. 
+
+*The user interacts with Kubernetes via kubectl, API, or a CI/CD pipeline
+
+*The request is sent to the Kubernetes API Server.
+
+*The API Server (kube-apiserver) validates the request and stores the object definition in etcd (Kubernetes' key-value store).
+
+*The API Server notifies the Scheduler and Controller Manager about the new Pod request.
+
+*The Kube Scheduler checks for resource availability, node affinity, and taints/tolerations.
+
+*Once a suitable node is found, the Pod is assigned to it.
+
+*The Kubelet (running on the assigned node) detects the new Pod via the API Server.
+
+*It pulls the container image from the container registry if it's not already present.
+
+*The Container Runtime (CRI) (Docker, containerd, CRI-O, etc.) creates and starts the container.
+
+*The Container Runtime (CRI) Sets up cgroups (for resource limits) and namespaces (for process isolation).
+
+*The Container Runtime (CRI) Attaches a network interface (via CNI) and mounts volumes.
+
+*Kubernetes uses a Container Network Interface (CNI) plugin (Flannel, Calico, Cilium, etc.) to configure networking.
+
+*The Pod is assigned an IP address and connected to the cluster network.
+
+*If the Pod needs persistent storage, it mounts the appropriate Persistent Volume (PV).
+
+*The Kubelet continuously checks container health via Liveness and Readiness Probes.
+
+*If all checks pass, the Pod transitions to the Running state.
+
+*If the Pod is part of a Service, Kubernetes updates the Service Endpoints.
+
+*Traffic is routed to the Pod via kube-proxy (using iptables or IPVS).
+
+*The Kubelet and Controller Manager monitor the Pod's health.
+
+*If a failure occurs, the Pod is rescheduled or restarted.
+
+*The Horizontal Pod Autoscaler (HPA) scales Pods based on CPU/memory usage.
+
+*If the container stops (or is deleted), Kubernetes Stops and removes the container.
+
+
+
